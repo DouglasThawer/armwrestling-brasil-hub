@@ -13,7 +13,8 @@ import {
   EyeOff,
   Mail,
   Facebook,
-  Chrome
+  Chrome,
+  Crown
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -60,10 +61,9 @@ const Login = () => {
 
         console.log('Dados salvos no localStorage, redirecionando...');
         
-        // Redirecionar baseado no tipo de usuário ou para o painel admin
+        // Redirecionar para a página de redirecionamento automático
         setTimeout(() => {
-          console.log('Executando redirecionamento para /admin');
-          navigate('/admin');
+          navigate('/redirect');
         }, 1500);
       } else {
         console.log('Nenhum usuário retornado do Supabase');
@@ -237,15 +237,32 @@ const Login = () => {
               <p className="text-sm text-muted-foreground">
                 Ainda não tem uma conta?
               </p>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Button variant="outline" className="w-full" asChild>
-                  <Link to="/registro">
+                  <Link to="/registro-equipe">
                     <Trophy className="h-4 w-4 mr-2" />
                     Cadastrar Equipe
                   </Link>
                 </Button>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link to="/registro-patrocinador">
+                      <Crown className="h-4 w-4 mr-2" />
+                      Patrocinador
+                    </Link>
+                  </Button>
+                  
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link to="/registro-usuario">
+                      <User className="h-4 w-4 mr-2" />
+                      Usuário
+                    </Link>
+                  </Button>
+                </div>
+                
                 <p className="text-xs text-muted-foreground px-4">
-                  Cadastre sua equipe e participe da maior comunidade de armwrestling do Brasil
+                  Escolha o tipo de cadastro adequado para suas necessidades
                 </p>
               </div>
             </div>

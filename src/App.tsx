@@ -20,6 +20,13 @@ import Privacidade from "./pages/Privacidade";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import AuthRedirect from "./components/auth/AuthRedirect";
+import DashboardEquipe from "./pages/dashboard/DashboardEquipe";
+import DashboardPatrocinador from "./pages/dashboard/DashboardPatrocinador";
+import DashboardUsuario from "./pages/dashboard/DashboardUsuario";
+import RegistroEquipe from "./pages/RegistroEquipe";
+import RegistroPatrocinador from "./pages/RegistroPatrocinador";
+import RegistroUsuario from "./pages/RegistroUsuario";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +37,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Rota de redirecionamento automático */}
+          <Route path="/redirect" element={<AuthRedirect />} />
+          
           {/* Rotas de Autenticação */}
           <Route path="/login" element={<Login />} />
           <Route path="/esqueci-senha" element={<EsqueciSenha />} />
@@ -37,12 +47,21 @@ const App = () => (
           
           {/* Rotas de Registro */}
           <Route path="/registro" element={<Registro />} />
+          <Route path="/registro-equipe" element={<RegistroEquipe />} />
+          <Route path="/registro-patrocinador" element={<RegistroPatrocinador />} />
+          <Route path="/registro-usuario" element={<RegistroUsuario />} />
           <Route path="/registro-sucesso" element={<RegistroSucesso />} />
           
           {/* Rotas Legais */}
           <Route path="/termos" element={<Termos />} />
           <Route path="/privacidade" element={<Privacidade />} />
           <Route path="/contato" element={<Contato />} />
+          
+          {/* Dashboards */}
+          <Route path="/admin" element={<Layout><Admin /></Layout>} />
+          <Route path="/dashboard-equipe" element={<Layout><DashboardEquipe /></Layout>} />
+          <Route path="/dashboard-patrocinador" element={<Layout><DashboardPatrocinador /></Layout>} />
+          <Route path="/dashboard-usuario" element={<Layout><DashboardUsuario /></Layout>} />
           
           {/* Rotas Principais com Layout */}
           <Route path="/" element={<Layout><Home /></Layout>} />
@@ -51,7 +70,6 @@ const App = () => (
           <Route path="/eventos" element={<Layout><Eventos /></Layout>} />
           <Route path="/patrocinios" element={<Layout><Patrocinios /></Layout>} />
           <Route path="/blog" element={<Layout><Blog /></Layout>} />
-          <Route path="/admin" element={<Layout><Admin /></Layout>} />
           
           {/* Rota Catch-all */}
           <Route path="*" element={<Layout><NotFound /></Layout>} />
