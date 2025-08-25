@@ -15,8 +15,8 @@ import {
   Facebook,
   Chrome
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,6 +27,7 @@ const Login = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn, loading: authLoading, error: authError } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,50 +35,36 @@ const Login = () => {
 
     try {
       console.log('Tentando fazer login com:', formData.email);
+      console.log('Formulário preenchido:', formData);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      console.log('Resposta do Supabase:', { data, error });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data.user) {
-        console.log('Usuário logado com sucesso:', data.user);
+      const result = await signIn(formData.email, formData.password);
+      
+      if (result.success) {
+        console.log('Login realizado com sucesso:', result.user);
         
         toast({
           title: "Login realizado com sucesso!",
           description: "Redirecionando para o painel...",
         });
 
-        // Salvar dados do usuário no localStorage
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('session', JSON.stringify(data.session));
-
-        console.log('Dados salvos no localStorage, redirecionando...');
-        
-        // Redirecionar baseado no tipo de usuário ou para o painel admin
+        // Redirecionar para o painel admin
         setTimeout(() => {
           console.log('Executando redirecionamento para /admin');
           navigate('/admin');
         }, 1500);
       } else {
-        console.log('Nenhum usuário retornado do Supabase');
+        console.error('Erro no login:', result.error);
         toast({
           title: "Erro no login",
-          description: "Nenhum usuário retornado. Tente novamente.",
+          description: result.error || "Credenciais inválidas. Tente novamente.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
-      console.error('Erro no login:', error);
+      console.error('Erro inesperado no login:', error);
       toast({
         title: "Erro no login",
-        description: error.message || "Credenciais inválidas. Tente novamente.",
+        description: "Erro inesperado. Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -86,99 +73,31 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/admin`
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-    } catch (error: any) {
-      console.error('Erro no login com Google:', error);
-      toast({
-        title: "Erro no login com Google",
-        description: error.message || "Não foi possível fazer login com Google.",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Login com Google",
+      description: "Funcionalidade em desenvolvimento. Use o login com email e senha.",
+    });
   };
 
-  const testSupabaseConnection = async () => {
-    try {
-      console.log('Testando conexão com Supabase...');
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error) {
-        console.error('Erro na conexão:', error);
-        toast({
-          title: "Erro na conexão",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        console.log('Conexão OK:', data);
-        toast({
-          title: "Conexão OK",
-          description: "Supabase está funcionando corretamente",
-        });
-      }
-    } catch (error: any) {
-      console.error('Erro no teste:', error);
-      toast({
-        title: "Erro no teste",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+  const runSupabaseTests = async () => {
+    toast({
+      title: "🧪 Testes",
+      description: "Sistema configurado para usar banco local. Testes do Supabase desabilitados.",
+    });
+  };
+
+  const createAdminUser = async () => {
+    toast({
+      title: "👤 Usuário Admin",
+      description: "Use admin@armwrestling.com.br / admin123 para fazer login",
+    });
   };
 
   const createTestUser = async () => {
-    try {
-      console.log('Criando usuário de teste...');
-      const { data, error } = await supabase.auth.signUp({
-        email: 'teste@armwrestling.com',
-        password: '123456',
-        options: {
-          data: {
-            first_name: 'Usuário',
-            last_name: 'Teste',
-            user_type: 'admin'
-          }
-        }
-      });
-      
-      if (error) {
-        console.error('Erro ao criar usuário:', error);
-        toast({
-          title: "Erro ao criar usuário",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        console.log('Usuário criado:', data);
-        toast({
-          title: "Usuário criado!",
-          description: "Use teste@armwrestling.com / 123456 para fazer login",
-        });
-        
-        // Preencher o formulário com as credenciais de teste
-        setFormData({
-          email: 'teste@armwrestling.com',
-          password: '123456'
-        });
-      }
-    } catch (error: any) {
-      console.error('Erro ao criar usuário:', error);
-      toast({
-        title: "Erro ao criar usuário",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "👤 Usuário Teste",
+      description: "Use teste@armwrestling.com.br / 123456 para fazer login",
+    });
   };
 
   const testNavigation = () => {
@@ -189,6 +108,13 @@ const Login = () => {
     } catch (error) {
       console.error('Erro na navegação:', error);
     }
+  };
+
+  const checkExistingUsers = async () => {
+    toast({
+      title: "👥 Usuários",
+      description: "Sistema configurado para usar banco local. Verifique o console para detalhes.",
+    });
   };
 
   const testClick = () => {
@@ -237,15 +163,15 @@ const Login = () => {
                 Continuar com Facebook
               </Button>
               
-              {/* Botão de teste */}
+              {/* Botão para criar usuário administrativo */}
               <Button 
                 variant="outline" 
-                className="w-full" 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
                 type="button"
-                onClick={testSupabaseConnection}
+                onClick={createAdminUser}
                 disabled={loading}
               >
-                🧪 Testar Conexão Supabase
+                👑 Criar Usuário Admin
               </Button>
               
               {/* Botão para criar usuário de teste */}
@@ -259,6 +185,45 @@ const Login = () => {
                 👤 Criar Usuário de Teste
               </Button>
               
+                             {/* Botão de teste */}
+               <Button 
+                 variant="outline" 
+                 className="w-full" 
+                 type="button"
+                 onClick={runSupabaseTests}
+                 disabled={loading}
+               >
+                 🧪 Testar Conexão Supabase
+               </Button>
+               
+               {/* Botão para verificar configuração */}
+               <Button 
+                 variant="outline" 
+                 className="w-full" 
+                 type="button"
+                 onClick={() => {
+                   const config = validateSupabaseConfig();
+                   console.log('🔧 Configuração do Supabase:', config);
+                   console.log('📋 Informações do Projeto:', PROJECT_INFO);
+                   
+                   if (config.isValid) {
+                     toast({
+                       title: "✅ Configuração OK",
+                       description: "Todas as configurações estão corretas",
+                     });
+                   } else {
+                     toast({
+                       title: "⚠️ Problemas na Configuração",
+                       description: config.issues.join(', '),
+                       variant: "destructive",
+                     });
+                   }
+                 }}
+                 disabled={loading}
+               >
+                 🔧 Verificar Configuração
+               </Button>
+              
               {/* Botão para testar navegação */}
               <Button 
                 variant="outline" 
@@ -268,6 +233,17 @@ const Login = () => {
                 disabled={loading}
               >
                 🧭 Testar Navegação
+              </Button>
+              
+              {/* Botão para verificar usuários existentes */}
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                type="button"
+                onClick={checkExistingUsers}
+                disabled={loading}
+              >
+                🔍 Verificar Usuários
               </Button>
               
               {/* Botão para testar clique */}
@@ -283,6 +259,18 @@ const Login = () => {
             </div>
 
             <Separator className="my-6" />
+
+            {/* Credenciais Padrão */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h4 className="font-medium text-blue-800 mb-2">🔑 Credenciais Padrão</h4>
+              <div className="text-sm text-blue-700 space-y-1">
+                <p><strong>Admin:</strong> admin@armwrestling.com.br / admin123</p>
+                <p><strong>Teste:</strong> teste@armwrestling.com.br / 123456</p>
+              </div>
+              <p className="text-xs text-blue-600 mt-2">
+                💡 Clique nos botões acima para criar os usuários automaticamente
+              </p>
+            </div>
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-4">

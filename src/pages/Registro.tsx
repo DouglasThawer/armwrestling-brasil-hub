@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { UserService } from "@/services/userService";
+import { TeamService } from "@/services/teamService";
 
 const Registro = () => {
   const [step, setStep] = useState(1);
@@ -119,46 +121,50 @@ const Registro = () => {
 
     try {
       // 1. Criar usuário responsável
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const userData = {
         email: formData.responsibleEmail,
         password: formData.responsiblePassword,
-        options: {
-          data: {
-            full_name: formData.responsibleName,
-            phone: formData.responsiblePhone,
-            user_type: 'team_leader'
-          }
-        }
-      });
+        first_name: formData.responsibleName.split(' ')[0] || formData.responsibleName,
+        last_name: formData.responsibleName.split(' ').slice(1).join(' ') || formData.responsibleName,
+        user_type: 'team_leader' as const,
+        phone: formData.responsiblePhone,
+      };
 
-      if (authError) throw authError;
+      const userResult = await UserService.createUser(userData);
+      console.log('Usuário responsável criado:', userResult);
 
-      // 2. Criar perfil da equipe (será implementado quando tivermos as tabelas no Supabase)
-      const teamProfile = {
+      if (!userResult.user) {
+        throw new Error('Usuário responsável não foi criado');
+      }
+
+      // 2. Criar perfil da equipe
+      const teamData = {
         name: formData.teamName,
         description: formData.teamDescription,
-        category: formData.teamCategory,
-        level: formData.teamLevel,
+        category: formData.teamCategory as any,
+        level: formData.teamLevel as any,
         address: formData.teamAddress,
         city: formData.teamCity,
         state: formData.teamState,
         phone: formData.teamPhone,
         email: formData.teamEmail,
-        website: formData.teamWebsite,
-        instagram: formData.teamInstagram,
-        facebook: formData.teamFacebook,
+        website: formData.teamWebsite || undefined,
+        instagram: formData.teamInstagram || undefined,
+        facebook: formData.teamFacebook || undefined,
         training_schedule: formData.trainingSchedule,
         training_address: formData.trainingAddress,
         max_members: parseInt(formData.maxMembers) || 20,
-        responsible_user_id: authData.user?.id,
-        status: 'pending_approval'
+        responsible_user_id: userResult.user.id,
       };
 
-      // Por enquanto, vamos salvar no localStorage como demonstração
-      localStorage.setItem('teamProfile', JSON.stringify(teamProfile));
+      const teamResult = await TeamService.createTeam(teamData);
+      console.log('Equipe criada:', teamResult);
+
+      // Salvar dados no localStorage para referência
+      localStorage.setItem('teamProfile', JSON.stringify(teamResult));
       localStorage.setItem('pendingTeam', JSON.stringify({
-        ...teamProfile,
-        user: authData.user
+        ...teamResult,
+        user: userResult.user
       }));
 
       toast({
@@ -173,9 +179,24 @@ const Registro = () => {
 
     } catch (error: any) {
       console.error('Erro no registro:', error);
+      
+      let errorMessage = "Não foi possível registrar a equipe.";
+      
+      if (error.message) {
+        if (error.message.includes('already registered')) {
+          errorMessage = "Este e-mail já está cadastrado. Use outro e-mail ou faça login.";
+        } else if (error.message.includes('password')) {
+          errorMessage = "Senha muito fraca. Use pelo menos 6 caracteres.";
+        } else if (error.message.includes('email')) {
+          errorMessage = "Formato de e-mail inválido.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Erro no registro",
-        description: error.message || "Não foi possível registrar a equipe.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
