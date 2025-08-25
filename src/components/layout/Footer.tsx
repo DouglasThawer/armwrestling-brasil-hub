@@ -22,13 +22,13 @@ const Footer = () => {
               para fortalecer a comunidade nacional da luta de braço.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
+              <a href="https://instagram.com/armwrestlingbrasil" target="_blank" rel="noopener noreferrer" className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
                 <Instagram className="h-5 w-5 text-primary" />
               </a>
-              <a href="#" className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
+              <a href="https://facebook.com/armwrestlingbrasil" target="_blank" rel="noopener noreferrer" className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
                 <Facebook className="h-5 w-5 text-primary" />
               </a>
-              <a href="#" className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
+              <a href="https://youtube.com/@armwrestlingbrasil" target="_blank" rel="noopener noreferrer" className="p-2 bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors">
                 <Youtube className="h-5 w-5 text-primary" />
               </a>
             </div>
@@ -80,14 +80,14 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/termos" className="text-muted-foreground hover:text-primary transition-colors">
                   Regulamento
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/contato" className="text-muted-foreground hover:text-primary transition-colors">
                   Contato
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

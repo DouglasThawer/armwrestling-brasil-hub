@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,18 +15,185 @@ import {
   Facebook,
   Chrome
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica de login será implementada com Supabase
-    console.log("Login:", formData);
+    setLoading(true);
+
+    try {
+      console.log('Tentando fazer login com:', formData.email);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log('Resposta do Supabase:', { data, error });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data.user) {
+        console.log('Usuário logado com sucesso:', data.user);
+        
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Redirecionando para o painel...",
+        });
+
+        // Salvar dados do usuário no localStorage
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('session', JSON.stringify(data.session));
+
+        console.log('Dados salvos no localStorage, redirecionando...');
+        
+        // Redirecionar baseado no tipo de usuário ou para o painel admin
+        setTimeout(() => {
+          console.log('Executando redirecionamento para /admin');
+          navigate('/admin');
+        }, 1500);
+      } else {
+        console.log('Nenhum usuário retornado do Supabase');
+        toast({
+          title: "Erro no login",
+          description: "Nenhum usuário retornado. Tente novamente.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      console.error('Erro no login:', error);
+      toast({
+        title: "Erro no login",
+        description: error.message || "Credenciais inválidas. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/admin`
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      console.error('Erro no login com Google:', error);
+      toast({
+        title: "Erro no login com Google",
+        description: error.message || "Não foi possível fazer login com Google.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const testSupabaseConnection = async () => {
+    try {
+      console.log('Testando conexão com Supabase...');
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Erro na conexão:', error);
+        toast({
+          title: "Erro na conexão",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        console.log('Conexão OK:', data);
+        toast({
+          title: "Conexão OK",
+          description: "Supabase está funcionando corretamente",
+        });
+      }
+    } catch (error: any) {
+      console.error('Erro no teste:', error);
+      toast({
+        title: "Erro no teste",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const createTestUser = async () => {
+    try {
+      console.log('Criando usuário de teste...');
+      const { data, error } = await supabase.auth.signUp({
+        email: 'teste@armwrestling.com',
+        password: '123456',
+        options: {
+          data: {
+            first_name: 'Usuário',
+            last_name: 'Teste',
+            user_type: 'admin'
+          }
+        }
+      });
+      
+      if (error) {
+        console.error('Erro ao criar usuário:', error);
+        toast({
+          title: "Erro ao criar usuário",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        console.log('Usuário criado:', data);
+        toast({
+          title: "Usuário criado!",
+          description: "Use teste@armwrestling.com / 123456 para fazer login",
+        });
+        
+        // Preencher o formulário com as credenciais de teste
+        setFormData({
+          email: 'teste@armwrestling.com',
+          password: '123456'
+        });
+      }
+    } catch (error: any) {
+      console.error('Erro ao criar usuário:', error);
+      toast({
+        title: "Erro ao criar usuário",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const testNavigation = () => {
+    console.log('Testando navegação...');
+    try {
+      navigate('/admin');
+      console.log('Navegação executada com sucesso');
+    } catch (error) {
+      console.error('Erro na navegação:', error);
+    }
+  };
+
+  const testClick = () => {
+    console.log('Botão clicado!');
+    alert('Botão funcionando!');
   };
 
   return (
@@ -55,13 +222,63 @@ const Login = () => {
           <CardContent className="space-y-6">
             {/* Social Login */}
             <div className="space-y-3">
-              <Button variant="outline" className="w-full" type="button">
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={loading}
+              >
                 <Chrome className="h-4 w-4 mr-2" />
                 Continuar com Google
               </Button>
-              <Button variant="outline" className="w-full" type="button">
+              <Button variant="outline" className="w-full" type="button" disabled={loading}>
                 <Facebook className="h-4 w-4 mr-2" />
                 Continuar com Facebook
+              </Button>
+              
+              {/* Botão de teste */}
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                type="button"
+                onClick={testSupabaseConnection}
+                disabled={loading}
+              >
+                🧪 Testar Conexão Supabase
+              </Button>
+              
+              {/* Botão para criar usuário de teste */}
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                type="button"
+                onClick={createTestUser}
+                disabled={loading}
+              >
+                👤 Criar Usuário de Teste
+              </Button>
+              
+              {/* Botão para testar navegação */}
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                type="button"
+                onClick={testNavigation}
+                disabled={loading}
+              >
+                🧭 Testar Navegação
+              </Button>
+              
+              {/* Botão para testar clique */}
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                type="button"
+                onClick={testClick}
+                disabled={loading}
+              >
+                👆 Testar Clique
               </Button>
             </div>
 
@@ -81,6 +298,7 @@ const Login = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -97,6 +315,7 @@ const Login = () => {
                     value={formData.password}
                     onChange={(e) => setFormData({...formData, password: e.target.value})}
                     required
+                    disabled={loading}
                   />
                   <Button
                     type="button"
@@ -104,6 +323,7 @@ const Login = () => {
                     size="sm"
                     className="absolute right-1 top-1 h-8 w-8 p-0"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={loading}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -116,7 +336,7 @@ const Login = () => {
 
               <div className="flex items-center justify-between">
                 <label className="flex items-center space-x-2 cursor-pointer">
-                  <input type="checkbox" className="rounded border-border" />
+                  <input type="checkbox" className="rounded border-border" disabled={loading} />
                   <span className="text-sm text-muted-foreground">Lembrar de mim</span>
                 </label>
                 <Link to="/esqueci-senha" className="text-sm text-primary hover:text-primary-glow">
@@ -124,9 +344,22 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full btn-hero text-lg py-3">
-                <User className="h-4 w-4 mr-2" />
-                Entrar
+              <Button 
+                type="submit" 
+                className="w-full btn-hero text-lg py-3"
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Entrando...
+                  </div>
+                ) : (
+                  <>
+                    <User className="h-4 w-4 mr-2" />
+                    Entrar
+                  </>
+                )}
               </Button>
             </form>
 
