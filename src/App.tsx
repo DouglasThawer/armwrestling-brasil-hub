@@ -21,66 +21,79 @@ import Privacidade from "./pages/Privacidade";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import AuthRedirect from "./components/auth/AuthRedirect";
+import DashboardEquipe from "./pages/dashboard/DashboardEquipe";
+import DashboardPatrocinador from "./pages/dashboard/DashboardPatrocinador";
+import DashboardUsuario from "./pages/dashboard/DashboardUsuario";
+import RegistroEquipe from "./pages/RegistroEquipe";
+import RegistroPatrocinador from "./pages/RegistroPatrocinador";
+import RegistroUsuario from "./pages/RegistroUsuario";
 
 const queryClient = new QueryClient();
 
-// Componente de teste para debug
-const TestRoute = ({ path, children }: { path: string; children: React.ReactNode }) => {
-  console.log(`App: Renderizando rota ${path}`);
-  return <>{children}</>;
-};
-
-const App = () => {
-  console.log('App: Componente App renderizado');
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Rotas de Autenticação */}
-            <Route path="/login" element={<TestRoute path="/login"><Login /></TestRoute>} />
-            <Route path="/esqueci-senha" element={<TestRoute path="/esqueci-senha"><EsqueciSenha /></TestRoute>} />
-            <Route path="/nova-senha" element={<TestRoute path="/nova-senha"><NovaSenha /></TestRoute>} />
-            
-            {/* Rotas de Registro */}
-            <Route path="/registro" element={<TestRoute path="/registro"><Registro /></TestRoute>} />
-            <Route path="/registro-sucesso" element={<TestRoute path="/registro-sucesso"><RegistroSucesso /></TestRoute>} />
-            
-            {/* Rotas Legais */}
-            <Route path="/termos" element={<TestRoute path="/termos"><Termos /></TestRoute>} />
-            <Route path="/privacidade" element={<TestRoute path="/privacidade"><Privacidade /></TestRoute>} />
-            <Route path="/contato" element={<TestRoute path="/contato"><Contato /></TestRoute>} />
-            
-            {/* Rotas Principais com Layout */}
-            <Route path="/" element={<TestRoute path="/"><Layout><Home /></Layout></TestRoute>} />
-            <Route path="/mapa" element={<TestRoute path="/mapa"><Layout><MapaInterativo /></Layout></TestRoute>} />
-            <Route path="/equipes" element={<TestRoute path="/equipes"><Layout><Equipes /></Layout></TestRoute>} />
-            <Route path="/eventos" element={<TestRoute path="/eventos"><Layout><Eventos /></Layout></TestRoute>} />
-            <Route path="/patrocinios" element={<TestRoute path="/patrocinios"><Layout><Patrocinios /></Layout></TestRoute>} />
-            <Route path="/blog" element={<TestRoute path="/blog"><Layout><Blog /></Layout></TestRoute>} />
-            
-            {/* Rota Admin Protegida */}
-            <Route 
-              path="/admin" 
-              element={
-                <TestRoute path="/admin">
-                  <ProtectedRoute requireAdmin>
-                    <Layout><Admin /></Layout>
-                  </ProtectedRoute>
-                </TestRoute>
-              } 
-            />
-            
-            {/* Rota Catch-all */}
-            <Route path="*" element={<TestRoute path="*"><Layout><NotFound /></Layout></TestRoute>} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          {/* Rota de redirecionamento automático */}
+          <Route path="/redirect" element={<AuthRedirect />} />
+          
+          {/* Rotas de Autenticação */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+          <Route path="/nova-senha" element={<NovaSenha />} />
+          
+          {/* Rotas de Registro */}
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/registro-equipe" element={<RegistroEquipe />} />
+          <Route path="/registro-patrocinador" element={<RegistroPatrocinador />} />
+          <Route path="/registro-usuario" element={<RegistroUsuario />} />
+          <Route path="/registro-sucesso" element={<RegistroSucesso />} />
+          
+          {/* Rotas Legais */}
+          <Route path="/termos" element={<Termos />} />
+          <Route path="/privacidade" element={<Privacidade />} />
+          <Route path="/contato" element={<Contato />} />
+          
+          {/* Dashboards Protegidos */}
+          <Route path="/admin" element={
+            <ProtectedRoute requireAdmin>
+              <Layout><Admin /></Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard-equipe" element={
+            <ProtectedRoute requireTeamLeader>
+              <Layout><DashboardEquipe /></Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard-patrocinador" element={
+            <ProtectedRoute>
+              <Layout><DashboardPatrocinador /></Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard-usuario" element={
+            <ProtectedRoute>
+              <Layout><DashboardUsuario /></Layout>
+            </ProtectedRoute>
+          } />
+          
+          {/* Rotas Principais com Layout */}
+          <Route path="/" element={<Layout><Home /></Layout>} />
+          <Route path="/mapa" element={<Layout><MapaInterativo /></Layout>} />
+          <Route path="/equipes" element={<Layout><Equipes /></Layout>} />
+          <Route path="/eventos" element={<Layout><Eventos /></Layout>} />
+          <Route path="/patrocinios" element={<Layout><Patrocinios /></Layout>} />
+          <Route path="/blog" element={<Layout><Blog /></Layout>} />
+          
+          {/* Rota Catch-all */}
+          <Route path="*" element={<Layout><NotFound /></Layout>} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

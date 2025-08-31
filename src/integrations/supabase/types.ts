@@ -14,7 +14,159 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_approved: boolean | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+          user_type: Database["public"]["Enums"]["user_type"]
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          is_approved?: boolean | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_approved?: boolean | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Relationships: []
+      }
+      sponsors: {
+        Row: {
+          company_name: string
+          contact_email: string
+          contact_person: string
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_approved: boolean | null
+          logo_url: string | null
+          plan_type: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_email: string
+          contact_person: string
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_approved?: boolean | null
+          logo_url?: string | null
+          plan_type?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_email?: string
+          contact_person?: string
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_approved?: boolean | null
+          logo_url?: string | null
+          plan_type?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          address: string | null
+          city: string
+          coach_name: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          facebook: string | null
+          id: string
+          instagram: string | null
+          is_approved: boolean | null
+          logo_url: string | null
+          name: string
+          state: string
+          training_days: string[] | null
+          training_hours: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city: string
+          coach_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          is_approved?: boolean | null
+          logo_url?: string | null
+          name: string
+          state: string
+          training_days?: string[] | null
+          training_hours?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string
+          coach_name?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          is_approved?: boolean | null
+          logo_url?: string | null
+          name?: string
+          state?: string
+          training_days?: string[] | null
+          training_hours?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +175,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_type: "admin" | "team" | "sponsor" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +302,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_type: ["admin", "team", "sponsor", "user"],
+    },
   },
 } as const
