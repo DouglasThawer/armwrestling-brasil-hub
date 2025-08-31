@@ -6,6 +6,9 @@ export const SUPABASE_CONFIG = {
   // Chave pública (anon key)
   anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2cGZsb3p3d3RqYmpmd2ZtamNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NDA0MzksImV4cCI6MjA3MTMxNjQzOX0.AHLuWMyt240UF3L9r0P4qvvXaNqbbFIbYL9oR4kja2w",
   
+  // Domínio personalizado
+  customDomain: "https://manzapkong.com.br",
+  
   // Configurações de conexão
   connection: {
     // URL de conexão direta (para debugging)
