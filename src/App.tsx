@@ -1,99 +1,108 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import Layout from "./components/layout/Layout";
-import Home from "./pages/Home";
-import MapaInterativo from "./pages/MapaInterativo";
-import Equipes from "./pages/Equipes";
-import Eventos from "./pages/Eventos";
-import Patrocinios from "./pages/Patrocinios";
-import Blog from "./pages/Blog";
-import Login from "./pages/Login";
-import EsqueciSenha from "./pages/EsqueciSenha";
-import NovaSenha from "./pages/NovaSenha";
-import Registro from "./pages/Registro";
-import RegistroSucesso from "./pages/RegistroSucesso";
-import Termos from "./pages/Termos";
-import Privacidade from "./pages/Privacidade";
-import Contato from "./pages/Contato";
-import NotFound from "./pages/NotFound";
-import Admin from "./pages/Admin";
-import AuthRedirect from "./components/auth/AuthRedirect";
-import DashboardEquipe from "./pages/dashboard/DashboardEquipe";
-import DashboardPatrocinador from "./pages/dashboard/DashboardPatrocinador";
-import DashboardUsuario from "./pages/dashboard/DashboardUsuario";
-import RegistroEquipe from "./pages/RegistroEquipe";
-import RegistroPatrocinador from "./pages/RegistroPatrocinador";
-import RegistroUsuario from "./pages/RegistroUsuario";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
+import Home from '@/pages/Home';
+import Blog from '@/pages/Blog';
+import Contato from '@/pages/Contato';
+import Equipes from '@/pages/Equipes';
+import Eventos from '@/pages/Eventos';
+import Login from '@/pages/Login';
+import Registro from '@/pages/Registro';
+import Patrocinios from '@/pages/Patrocinios';
+import MapaInterativo from '@/pages/MapaInterativo';
+import Privacidade from '@/pages/Privacidade';
+import Termos from '@/pages/Termos';
+import NotFound from '@/pages/NotFound';
+import EsqueciSenha from '@/pages/EsqueciSenha';
+import NovaSenha from '@/pages/NovaSenha';
+import RegistroSucesso from '@/pages/RegistroSucesso';
+import Admin from '@/pages/Admin';
+import RegistroEquipe from '@/pages/RegistroEquipe';
+import RegistroPatrocinador from '@/pages/RegistroPatrocinador';
+import RegistroUsuario from '@/pages/RegistroUsuario';
+import DashboardEquipe from '@/pages/dashboard/DashboardEquipe';
+import DashboardPatrocinador from '@/pages/dashboard/DashboardPatrocinador';
+import DashboardUsuario from '@/pages/dashboard/DashboardUsuario';
+import AuthRedirect from '@/components/auth/AuthRedirect';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import Layout from '@/components/layout/Layout';
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+function App() {
+  return (
+    <Router>
+      <Layout>
         <Routes>
-          {/* Rota de redirecionamento automático */}
-          <Route path="/redirect" element={<AuthRedirect />} />
+          {/* Rotas públicas */}
+          <Route path="/" element={<Home />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/contato" element={<Contato />} />
+          <Route path="/equipes" element={<Equipes />} />
+          <Route path="/eventos" element={<Eventos />} />
+          <Route path="/patrocinios" element={<Patrocinios />} />
+          <Route path="/mapa" element={<MapaInterativo />} />
+          <Route path="/privacidade" element={<Privacidade />} />
+          <Route path="/termos" element={<Termos />} />
           
-          {/* Rotas de Autenticação */}
+          {/* Rotas de autenticação */}
+          <Route path="/auth" element={<Login />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/registro/equipe" element={<RegistroEquipe />} />
+          <Route path="/registro/patrocinador" element={<RegistroPatrocinador />} />
+          <Route path="/registro/usuario" element={<RegistroUsuario />} />
           <Route path="/esqueci-senha" element={<EsqueciSenha />} />
           <Route path="/nova-senha" element={<NovaSenha />} />
-          
-          {/* Rotas de Registro */}
-          <Route path="/registro" element={<Registro />} />
-          <Route path="/registro-equipe" element={<RegistroEquipe />} />
-          <Route path="/registro-patrocinador" element={<RegistroPatrocinador />} />
-          <Route path="/registro-usuario" element={<RegistroUsuario />} />
           <Route path="/registro-sucesso" element={<RegistroSucesso />} />
           
-          {/* Rotas Legais */}
-          <Route path="/termos" element={<Termos />} />
-          <Route path="/privacidade" element={<Privacidade />} />
-          <Route path="/contato" element={<Contato />} />
+          {/* Rotas protegidas */}
+          <Route path="/auth-redirect" element={<AuthRedirect />} />
           
-          {/* Dashboards Protegidos */}
-          <Route path="/admin" element={
-            <ProtectedRoute requireAdmin>
-              <Layout><Admin /></Layout>
-            </ProtectedRoute>
-          } />
-          <Route path="/dashboard-equipe" element={
-            <ProtectedRoute requireTeamLeader>
-              <Layout><DashboardEquipe /></Layout>
-            </ProtectedRoute>
-          } />
-          <Route path="/dashboard-patrocinador" element={
-            <ProtectedRoute>
-              <Layout><DashboardPatrocinador /></Layout>
-            </ProtectedRoute>
-          } />
-          <Route path="/dashboard-usuario" element={
-            <ProtectedRoute>
-              <Layout><DashboardUsuario /></Layout>
-            </ProtectedRoute>
-          } />
+          {/* Dashboard do usuário */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <DashboardUsuario />
+              </ProtectedRoute>
+            } 
+          />
           
-          {/* Rotas Principais com Layout */}
-          <Route path="/" element={<Layout><Home /></Layout>} />
-          <Route path="/mapa" element={<Layout><MapaInterativo /></Layout>} />
-          <Route path="/equipes" element={<Layout><Equipes /></Layout>} />
-          <Route path="/eventos" element={<Layout><Eventos /></Layout>} />
-          <Route path="/patrocinios" element={<Layout><Patrocinios /></Layout>} />
-          <Route path="/blog" element={<Layout><Blog /></Layout>} />
+          {/* Dashboard de equipe */}
+          <Route 
+            path="/dashboard/equipe" 
+            element={
+              <ProtectedRoute requireTeamLeader>
+                <DashboardEquipe />
+              </ProtectedRoute>
+            } 
+          />
           
-          {/* Rota Catch-all */}
-          <Route path="*" element={<Layout><NotFound /></Layout>} />
+          {/* Dashboard de patrocinador */}
+          <Route 
+            path="/dashboard/patrocinador" 
+            element={
+              <ProtectedRoute>
+                <DashboardPatrocinador />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Painel administrativo */}
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <Admin />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Rota 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+      </Layout>
+      <Toaster />
+    </Router>
+  );
+}
 
 export default App;
