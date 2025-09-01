@@ -14,7 +14,294 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      events: {
+        Row: {
+          address: string
+          banner_url: string | null
+          category: string
+          city: string
+          created_at: string | null
+          current_participants: number | null
+          date: string
+          description: string | null
+          id: string
+          location: string
+          max_participants: number | null
+          registration_deadline: string
+          state: string
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          address: string
+          banner_url?: string | null
+          category: string
+          city: string
+          created_at?: string | null
+          current_participants?: number | null
+          date: string
+          description?: string | null
+          id?: string
+          location: string
+          max_participants?: number | null
+          registration_deadline: string
+          state: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string
+          banner_url?: string | null
+          category?: string
+          city?: string
+          created_at?: string | null
+          current_participants?: number | null
+          date?: string
+          description?: string | null
+          id?: string
+          location?: string
+          max_participants?: number | null
+          registration_deadline?: string
+          state?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string | null
+          excerpt: string | null
+          featured_image_url: string | null
+          id: string
+          published_at: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          published_at?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          published_at?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          is_active: boolean | null
+          last_name: string
+          phone: string | null
+          updated_at: string | null
+          user_id: string
+          user_type: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          is_active?: boolean | null
+          last_name: string
+          phone?: string | null
+          updated_at?: string | null
+          user_id: string
+          user_type: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          is_active?: boolean | null
+          last_name?: string
+          phone?: string | null
+          updated_at?: string | null
+          user_id?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
+      sponsors: {
+        Row: {
+          company_name: string
+          contact_email: string
+          contact_person: string
+          contact_phone: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_approved: boolean | null
+          logo_url: string | null
+          plan_type: string
+          updated_at: string | null
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_email: string
+          contact_person: string
+          contact_phone: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_approved?: boolean | null
+          logo_url?: string | null
+          plan_type: string
+          updated_at?: string | null
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_email?: string
+          contact_person?: string
+          contact_phone?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_approved?: boolean | null
+          logo_url?: string | null
+          plan_type?: string
+          updated_at?: string | null
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      system_settings: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          setting_key: string
+          setting_value: Json
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          setting_key: string
+          setting_value: Json
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          address: string
+          city: string
+          coach_name: string
+          contact_email: string
+          contact_phone: string
+          created_at: string | null
+          description: string | null
+          facebook: string | null
+          id: string
+          instagram: string | null
+          is_approved: boolean | null
+          logo_url: string | null
+          name: string
+          state: string
+          training_days: string[] | null
+          training_hours: string
+          updated_at: string | null
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address: string
+          city: string
+          coach_name: string
+          contact_email: string
+          contact_phone: string
+          created_at?: string | null
+          description?: string | null
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          is_approved?: boolean | null
+          logo_url?: string | null
+          name: string
+          state: string
+          training_days?: string[] | null
+          training_hours: string
+          updated_at?: string | null
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address?: string
+          city?: string
+          coach_name?: string
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string | null
+          description?: string | null
+          facebook?: string | null
+          id?: string
+          instagram?: string | null
+          is_approved?: boolean | null
+          logo_url?: string | null
+          name?: string
+          state?: string
+          training_days?: string[] | null
+          training_hours?: string
+          updated_at?: string | null
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
